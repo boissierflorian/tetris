@@ -1,84 +1,45 @@
 package net.mostlyoriginal.game.screen;
 
-import com.artemis.FluidEntityPlugin;
+import com.artemis.SuperMapper;
 import com.artemis.World;
 import com.artemis.WorldConfigurationBuilder;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.math.MathUtils;
-import net.mostlyoriginal.game.system.ExampleSystem;
-import net.mostlyoriginal.plugin.ProfilerPlugin;
+import com.artemis.managers.TagManager;
+import com.badlogic.gdx.graphics.Color;
 
-/**
- * Example main game screen.
- *
- * @author Daan van Yperen
- */
-public class GameScreen implements Screen {
+import net.mostlyoriginal.api.manager.FontManager;
+import net.mostlyoriginal.api.system.camera.CameraSystem;
+import net.mostlyoriginal.api.system.graphics.RenderBatchingSystem;
+import net.mostlyoriginal.api.system.render.ClearScreenSystem;
+import net.mostlyoriginal.game.GameRules;
+import net.mostlyoriginal.game.GdxArtemisGame;
+import net.mostlyoriginal.game.system.GridUpdateSystem;
+import net.mostlyoriginal.game.system.MyAnimRenderSystem;
+import net.mostlyoriginal.game.system.MyLabelRenderSystem;
+import net.mostlyoriginal.game.system.logic.TransitionSystem;
+import net.mostlyoriginal.game.system.view.GameScreenAssetSystem;
+import net.mostlyoriginal.game.system.view.GameScreenSetupSystem;
+import net.mostlyoriginal.plugin.OperationsPlugin;
 
-    public static final String BACKGROUND_COLOR_HEX = "969291";
+public class GameScreen extends TransitionableWorldScreen {
 
-    public static final float MIN_DELTA = 1 / 15f;
-    protected World world;
-
-    protected World createWorld() {
-        return new World(new WorldConfigurationBuilder()
-                // keeps components available until all listeners have been called.
-                // Use this if your systems need to access components to clean up after removal.
-                .alwaysDelayComponentRemoval(true)
-                // Describes dependencies on plugins. You can find more example plugins commented out in build.gradle.
-                .dependsOn(
-                        //EntityLinkManager.class,
-                        //OperationsPlugin.class,
-                        ProfilerPlugin.class,
-                        FluidEntityPlugin.class)
-                .with(
-                        // put your own systems here! With the default InvocationStrategy they are called in order each frame.
-                        new ExampleSystem()
-                ).build());
-    }
-
-    @Override
-    public void show() {
-        if (world == null) {
-            world = createWorld();
-        }
-    }
-
-    @Override
-    public void render(float delta) {
-        if (world == null) {
-            throw new RuntimeException("World not initialized.");
-        }
-        // Prevent spikes in delta from causing insane world updates.
-        world.setDelta(MathUtils.clamp(delta, 0, MIN_DELTA));
-        world.process();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-
+	@Override
+	protected World createWorld() {
+		RenderBatchingSystem renderBatchingSystem;
+		return new World(new WorldConfigurationBuilder()
+				.dependsOn(OperationsPlugin.class)
+				.with(WorldConfigurationBuilder.Priority.HIGH, new SuperMapper(),
+						new FontManager(), new TagManager(),
+						new CameraSystem(GameRules.CAMERA_ZOOM),
+						new GameScreenAssetSystem())
+				.with(WorldConfigurationBuilder.Priority.LOW,
+						new ClearScreenSystem(Color.valueOf("3D6B9F")),
+						new GridUpdateSystem(),
+						renderBatchingSystem = new RenderBatchingSystem(),
+						new MyAnimRenderSystem(renderBatchingSystem),
+						new MyLabelRenderSystem(renderBatchingSystem),
+						new GameScreenSetupSystem(),
+						new TransitionSystem(GdxArtemisGame.getInstance(), this)
+				).build());
+	}
 
 }

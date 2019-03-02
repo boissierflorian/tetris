@@ -1,0 +1,55 @@
+
+tileset.png
+size: 1024,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+cube
+  rotate: false
+  xy: 887, 448
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+grid
+  rotate: false
+  xy: 567, 12
+  size: 244, 484
+  orig: 244, 484
+  offset: 0, 0
+  index: -1
+l
+  rotate: false
+  xy: 813, 448
+  size: 72, 48
+  orig: 72, 48
+  offset: 0, 0
+  index: -1
+logo
+  rotate: false
+  xy: 2, 100
+  size: 563, 396
+  orig: 563, 396
+  offset: 0, 0
+  index: -1
+stick
+  rotate: false
+  xy: 2, 2
+  size: 24, 96
+  orig: 24, 96
+  offset: 0, 0
+  index: -1
+t
+  rotate: false
+  xy: 28, 50
+  size: 72, 48
+  orig: 72, 48
+  offset: 0, 0
+  index: -1
+z
+  rotate: false
+  xy: 813, 374
+  size: 48, 72
+  orig: 48, 72
+  offset: 0, 0
+  index: -1
